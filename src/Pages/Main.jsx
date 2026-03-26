@@ -417,17 +417,17 @@ const Main = () => {
                         <div className="flex-1 text-right text-xl pr-2 -mt-2 tracking-wide">
                           {plateChar1} {plateChar2} {plateChar3}
                         </div>
-                        <div className="flex-1 text-left text-[23px]  pl-2 font-mono tracking-tighter">
+                        <div className="flex-1 text-left text-[23px]  pl-2  tracking-tighter">
                           {toArabicDigits(plateNumber)}
                         </div>
                       </div>
                       <div className="flex justify-between items-baseline w-full pt-1 border-t border-black/10">
-                        <div className="flex-1 text-right text-xl pr-2 font-mono uppercase tracking-widest">
+                        <div className="flex-1 text-right text-xl pr-2  uppercase tracking-widest">
                           {arabicToEnglishMap[plateChar1] || ""}{" "}
                           {arabicToEnglishMap[plateChar2] || ""}{" "}
                           {arabicToEnglishMap[plateChar3] || ""}
                         </div>
-                        <div className="flex-1 text-left text-[23px] pl-2 font-mono tracking-tighter">
+                        <div className="flex-1 text-left text-[23px] pl-2  tracking-tighter">
                           {toEnglishDigits(plateNumber)}
                         </div>
                       </div>
