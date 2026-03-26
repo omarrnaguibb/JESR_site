@@ -26,21 +26,21 @@ const Main = () => {
   const arabicToEnglishMap = {
     أ: "A",
     ب: "B",
-    ح: "J",
+    ح: "H",
     د: "D",
     ر: "R",
     س: "S",
-    ص: "X",
+    ص: "S",
     ط: "T",
-    ع: "E",
-    ق: "G",
+    ع: "A",
+    ق: "K",
     ك: "K",
     ل: "L",
-    م: "Z",
+    م: "M",
     ن: "N",
     ه: "H",
-    و: "U",
-    ي: "V",
+    و: "W",
+    ي: "Y",
   };
 
   const westernToArabicDigits = {
@@ -195,18 +195,18 @@ const Main = () => {
               رقم الجوال
             </label>
             <div className="flex gap-2">
-              <div className="flex-1 flex  border rounded-lg focus-within:ring-2 focus-within:ring-[#218795] transition-all bg-gray-50 overflow-hidden">
+              <div className="flex-1 flex items-stretch  border rounded-lg focus-within:ring-2 focus-within:ring-[#218795] transition-all bg-gray-50 overflow-hidden">
                 <input
                   type="tel"
                   maxLength="9"
-                  className="w-full py-3 px-4 bg-transparent outline-none text-left"
+                  className="w-full py-3 px-4 bg-transparent outline-none text-left text-base"
                   dir="ltr"
-                  placeholder="5xxxxxxxx"
+                  placeholder="ادخل رقم الجوال"
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
                 />
                 <select
-                  className="px-3 text-gray-500  text-xs border-l"
+                  className=" text-gray-500 outline-none  text-base border-l"
                   value={phoneCode}
                   onChange={(e) => setPhoneCode(e.target.value)}
                 >
