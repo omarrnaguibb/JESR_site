@@ -16,8 +16,11 @@ const Main = () => {
   const [plateChar2, setPlateChar2] = useState("");
   const [plateChar3, setPlateChar3] = useState("");
   const [plateNumber, setPlateNumber] = useState("");
-
-  const price = currency === "sar" ? 70 : 7;
+  const [phoneCode, setPhoneCode] = useState("966+");
+  let price = currency === "sar" ? 70 : 7;
+  if (hasTrailer === "true") {
+    price = currency === "sar" ? 110 : 11;
+  }
   const currencyText = currency === "sar" ? "ريال سعودي" : "دينار بحريني";
 
   const arabicToEnglishMap = {
@@ -192,7 +195,7 @@ const Main = () => {
               رقم الجوال
             </label>
             <div className="flex gap-2">
-              <div className="flex-1 flex items-center border rounded-lg focus-within:ring-2 focus-within:ring-[#218795] transition-all bg-gray-50 overflow-hidden">
+              <div className="flex-1 flex  border rounded-lg focus-within:ring-2 focus-within:ring-[#218795] transition-all bg-gray-50 overflow-hidden">
                 <input
                   type="tel"
                   maxLength="9"
@@ -202,9 +205,25 @@ const Main = () => {
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
                 />
-                <span className="px-3 text-gray-500 font-mono text-sm border-l">
-                  966+
-                </span>
+                <select
+                  className="px-3 text-gray-500 font-mono text-sm border-l"
+                  value={phoneCode}
+                  onChange={(e) => setPhoneCode(e.target.value)}
+                >
+                  <option>966+</option>
+                  <option>973+</option>
+                </select>
+                {phoneCode === "966+" ? (
+                  <img
+                    src="data:image/png;base64,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"
+                    className="w-12"
+                  />
+                ) : (
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Bahrain.svg"
+                    className="w-12"
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -485,7 +504,13 @@ const Main = () => {
             </div>
 
             {/* Amount Summary */}
-            <div className="bg-[#2d3436] text-white rounded-xl p-8 flex justify-between items-center shadow-2xl transition hover:scale-[1.01] border-b-8 border-[#218795]">
+            <div
+              className="text-white rounded-xl p-8 flex justify-between items-center shadow-2xl transition hover:scale-[1.01] border-b-8 border-[#218795]"
+              style={{
+                background:
+                  "linear-gradient(90deg, #269a8c 0%, #249588 1%, #1d7172 9%, #17535e 18%, #113a4f 28%, #0d2743 39%, #0b1a3a 52%, #091235 68%, #091034 1%)",
+              }}
+            >
               <div className="space-y-1">
                 <h4 className="text-xl font-bold opacity-90">
                   المبلغ الإجمالي
@@ -499,33 +524,37 @@ const Main = () => {
             </div>
 
             {/* Payment Selection */}
-            <div className="grid grid-cols-1  gap-8 pt-8">
+            <div className="grid grid-cols-1  gap-8 ">
               <div className="p-8 bg-white border border-gray-100 rounded-xl shadow-inner space-y-6 flex flex-col justify-center items-center">
                 <label className="block text-lg font-bold text-[#2d3436] border-b pb-3 uppercase  w-full tracking-wider">
                   إختر طريقة الدفع
                 </label>
-                <div className="flex gap-6 flex-col w-full items-center">
+                <div className="flex gap-6  w-full items-center">
                   <button
                     onClick={() => setPaymentMethod("visa")}
-                    className={`w-1/2 p-4 border-4 rounded-xl transition-all flex items-center justify-center gap-x-2 ${paymentMethod === "visa" ? "border-[#218795] bg-[#218795]/10 scale-105" : "border-gray-50 hover:border-gray-200"}`}
+                    className={`w-2/3 p-4 border-4 rounded-xl transition-all flex items-center justify-center gap-x-2 ${paymentMethod === "visa" ? "border-[#218795] bg-[#218795]/10 scale-105" : "border-gray-50 hover:border-gray-200"}`}
                   >
-                    <img src="/MasterCard.svg" alt="Mada" className="h-6" />
-                    <img src="/Visa.svg" alt="Mada" className="h-6" />
-                    <img src="/mada.png" alt="Mada" className="h-6" />
+                    <img src="/MasterCard.svg" alt="Mada" className="h-4" />
+                    <img src="/Visa.svg" alt="Mada" className="h-4" />
+                    <img src="/mada.png" alt="Mada" className="h-4" />
                   </button>
                   <button
                     disabled
                     onClick={() => setPaymentMethod("applepay")}
-                    className={`w-1/2 p-2 border-4 rounded-xl transition-all flex items-center justify-center ${paymentMethod === "applepay" ? "border-[#218795] bg-[#218795]/10 scale-105" : "border-gray-200 hover:border-gray-200"}`}
+                    className={`w-1/3 p-2 border-4 rounded-xl transition-all flex items-center justify-center ${paymentMethod === "applepay" ? "border-[#218795] bg-[#218795]/10 scale-105" : "border-gray-200 hover:border-gray-200"}`}
                   >
                     <img src="/applepay.png" alt="Apple Pay" className="w-20" />
                   </button>
                 </div>
                 <button
                   onClick={handlePayment}
-                  className="w-1/2  py-3 bg-[#218795] hover:bg-[#1a6d78] text-white rounded-2xl text-2xl font-bold shadow-2xl shadow-[#218795]/30 transition-all active:scale-95 mt-4"
+                  className="w-2/3 py-3 text-white rounded-2xl text-xl font-bold shadow-2xl shadow-[#218795]/30 transition-all active:scale-95 mt-4"
+                  style={{
+                    background:
+                      "linear-gradient(90deg,#269a8c 0%,#249588 1%,#1d7172 9%,#17535e 18%,#113a4f 28%,#0d2743 39%,#0b1a3a 52%,#091235 68%,#091034 1%)",
+                  }}
                 >
-                  ادفع الآن
+                  ادفع
                 </button>
               </div>
             </div>
