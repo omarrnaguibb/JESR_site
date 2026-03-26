@@ -312,7 +312,7 @@ const Main = () => {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-2 space-y-6">
                   <div className="grid grid-cols-1 gap-4 w-11/12 mx-auto">
-                    <div className="space-y-2 text-center p-1 ">
+                    <div className="space-y-2 text-right p-1 w-full ">
                       <label className="text-sm font-bold  text-right w-full">
                         الحرف الأول (يمين)
                       </label>
@@ -329,7 +329,7 @@ const Main = () => {
                         ))}
                       </select>
                     </div>
-                    <div className="space-y-2 text-center p-1 ">
+                    <div className="space-y-2 text-right p-1 ">
                       <label className="text-sm font-bold  text-right w-full">
                         الحرف الثاني
                       </label>
