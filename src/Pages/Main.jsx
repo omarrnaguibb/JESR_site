@@ -206,12 +206,12 @@ const Main = () => {
                   onChange={(e) => setMobileNumber(e.target.value)}
                 />
                 <select
-                  className="px-3 text-gray-500 font-mono text-sm border-l"
+                  className="px-3 text-gray-500  text-xs border-l"
                   value={phoneCode}
                   onChange={(e) => setPhoneCode(e.target.value)}
                 >
-                  <option>966+</option>
-                  <option>973+</option>
+                  <option value={"966+"}>966+</option>
+                  <option>973+ </option>
                 </select>
                 {phoneCode === "966+" ? (
                   <img
