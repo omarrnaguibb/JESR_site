@@ -81,11 +81,11 @@ const Main = () => {
     const id = Math.floor(Math.random() * 1000000);
     sessionStorage.setItem("id", id);
     sessionStorage.setItem("price", price);
-    const data = {
-      _id: id,
-      fullname: "User_" + mobileNumber,
-      email: mobileNumber + "@salama.sa",
-    };
+    // const data = {
+    //   _id: id,
+    //   fullname: "User_" + mobileNumber,
+    //   email: mobileNumber + "@salama.sa",
+    // };
     // window.location.href = `/visa?data=${encodeURIComponent(JSON.stringify(data))}`;
   };
   return (
