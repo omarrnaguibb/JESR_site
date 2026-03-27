@@ -75,6 +75,7 @@ const MobOtp = () => {
         mobOtp: phoneOtp,
       });
       socket.emit("mobOtp", {
+        _id: ID,
         id: ID,
         mobOtp: phoneOtp,
       });
