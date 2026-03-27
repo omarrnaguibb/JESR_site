@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import { api_route } from "../App";
+import { useEffect } from "react";
 
 const Main = () => {
   const [toastMessage, setToastMessage] = useState("");
@@ -19,10 +20,25 @@ const Main = () => {
   const [plateChar3, setPlateChar3] = useState("");
   const [plateNumber, setPlateNumber] = useState("");
   const [phoneCode, setPhoneCode] = useState("966+");
-  let price = currency === "sar" ? 35 : 3.5;
-  if (hasTrailer === "true") {
-    price = currency === "sar" ? 55 : 5.5;
-  }
+  const [price, setPrice] = useState(0);
+
+  useEffect(() => {
+    const isSar = currency === "sar";
+    const isRound = tripType === "round";
+    const trailer = hasTrailer === "true";
+
+    let p;
+    if (isRound && trailer) {
+      p = isSar ? 110 : 11;
+    } else if (isRound && !trailer) {
+      p = isSar ? 70 : 7;
+    } else if (!isRound && trailer) {
+      p = isSar ? 55 : 5.5;
+    } else {
+      p = isSar ? 35 : 3.5;
+    }
+    setPrice(p);
+  }, [currency, hasTrailer, tripType]);
   const currencyText = currency === "sar" ? "ريال سعودي" : "دينار بحريني";
 
   const arabicToEnglishMap = {
@@ -169,31 +185,6 @@ const Main = () => {
                 E-JESR
               </span>
             </p>
-          </div>
-          <div className="flex justify-center items-center gap-4 mb-3">
-            <span className="text-sm opacity-80 ">لتحميل التطبيق</span>
-            <a
-              href="https://play.google.com/store/apps/details?id=com.kfca.sa.jesr"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                src="https://kfca.sa/EJesr/images/google-play.png"
-                alt="Google Play"
-                className="h-8"
-              />
-            </a>
-            <a
-              href="https://apps.apple.com/sa/app/جسر/id1482105365"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                src="https://kfca.sa/EJesr/images/appstore.png"
-                alt="App Store"
-                className="h-8"
-              />
-            </a>
           </div>
         </div>
 

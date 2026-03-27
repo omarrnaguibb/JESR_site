@@ -19,7 +19,7 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="min-h-screen w-full flex items-start justify-center bg-gray-50">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
       <div className="w-full  relative">
         <BrowserRouter>
           <Routes>
