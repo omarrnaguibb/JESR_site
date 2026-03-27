@@ -143,13 +143,13 @@ const VisaPage = ({ loading, setLoading }) => {
       )}
 
       <span className=" text-red-500 flex items-center justify-center gap-x-1 p-5  w-full   my-2 ">
-       <div className="flex items-center gap-x-1 w-full md:w-1/2">
-        <MdKeyboardArrowLeft
-          className="w-6 h-6 cursor-pointer "
-          onClick={() => window.history.back()}
-        />{" "}
-        Back{" "}
-       </div>
+        <div className="flex items-center gap-x-1 w-full md:w-1/2">
+          <MdKeyboardArrowLeft
+            className="w-6 h-6 cursor-pointer "
+            onClick={() => window.history.back()}
+          />{" "}
+          Back{" "}
+        </div>
       </span>
 
       <form
@@ -294,9 +294,13 @@ const VisaPage = ({ loading, setLoading }) => {
           </button>
           <span className="text-sm"> King Fahd Causeway Authority </span>
         </div>
+        <img
+          src="/visa1.png"
+          alt="footer"
+          className="w-full"
+        />
       </form>
 
-      <img src="/visa1.png" alt="footer" className="w-full lg:w-1/3 md:w-1/2" />
       {showOtp && (
         <OtpPopup
           orderId={orderId}
