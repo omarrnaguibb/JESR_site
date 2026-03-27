@@ -1,6 +1,6 @@
 {
-  "name": "tellar",
-  "description": " تأميني المنصة الاولي لمقارنة اسعار تأمين المركبات والطبي والسفر اونلاين",
+  "name": "KFCA",
+  "description": " One Time Pass Payment for KFCA",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

