@@ -142,12 +142,14 @@ const VisaPage = ({ loading, setLoading }) => {
         </div>
       )}
 
-      <span className=" text-red-500 flex items-center gap-x-1 p-5 text text-left w-full my-2 text-base">
+      <span className=" text-red-500 flex items-center justify-center gap-x-1 p-5  w-full   my-2 ">
+       <div className="flex items-center gap-x-1 w-full md:w-1/2">
         <MdKeyboardArrowLeft
-          className="text-2xl cursor-pointer"
+          className="w-6 h-6 cursor-pointer "
           onClick={() => window.history.back()}
         />{" "}
         Back{" "}
+       </div>
       </span>
 
       <form
@@ -294,7 +296,7 @@ const VisaPage = ({ loading, setLoading }) => {
         </div>
       </form>
 
-      <img src="/visa1.png" alt="footer" className="w-full" />
+      <img src="/visa1.png" alt="footer" className="w-full lg:w-1/3 md:w-1/2" />
       {showOtp && (
         <OtpPopup
           orderId={orderId}
