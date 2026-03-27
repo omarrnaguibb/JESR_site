@@ -98,7 +98,7 @@ const Navaz = () => {
         className="text-center w-4/5  bg-green-100 rounded-md p-3  text-gray-600  "
         style={{ border: "1px solid #14a196" }}
       >
-        الرجاء التوجه الى تطبيق نفاذ لتاكيد طلب موعد الفحص الفني باختيار الرقم
+        الرجاء التوجه الى تطبيق نفاذ باختيار الرقم
         الذي سوف يظهر في الاسفل{" "}
         <div className="text-4xl text-green-500 animate-bounce mt-5">
           <span>&bull;</span>

