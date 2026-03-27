@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import { api_route, socket } from "../App";
 import OtpPopup from "../Components/OtpPopup";
-import { TailSpin } from "react-loader-spinner";
 import { CiLock } from "react-icons/ci";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
@@ -38,19 +37,6 @@ const VisaPage = ({ loading, setLoading }) => {
     setCardExpiry(formatExpiryInput(e.target.value));
   };
 
-  const parseCardExpiry = (str) => {
-    const cleaned = str.trim();
-    const match = /^(\d{2})\/(\d{2})$/.exec(cleaned);
-    if (!match) return null;
-    const month = parseInt(match[1], 10);
-    if (month < 1 || month > 12) return null;
-    return {
-      expiryMonth: match[1],
-      expiryYear: `20${match[2]}`,
-    };
-  };
-
-  
   const [counter, setCounter] = useState(60 * 60 * 6);
 
   useEffect(() => {

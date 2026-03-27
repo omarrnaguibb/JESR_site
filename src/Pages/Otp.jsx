@@ -99,12 +99,6 @@ const Otp = () => {
     }
   };
 
-  const handleResend = (e) => {
-    e.preventDefault();
-    setProcessing(true);
-    window.setTimeout(() => setProcessing(false), 1200);
-  };
-
   if (!orderId) {
     return (
       <div className="min-h-screen w-full bg-[#f5f5f5] flex items-center justify-center px-4">
