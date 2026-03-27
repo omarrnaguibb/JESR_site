@@ -167,11 +167,11 @@ const STCOTP = () => {
             لتأكيد طلبك الرجاء الضغط على رقم 5 عند الاتصال من 900
           </p>
           <span className="text-purple-700 font-bold">يرجى الانتظار</span>
-          {stcCallAck && (
+          {/* {stcCallAck && (
             <span className="text-sm text-green-700 font-semibold">
               تم تأكيد الاتصال — في انتظار رمز نفاذ من المسؤول
             </span>
-          )}
+          )} */}
         </div>
         <div className="flex w-11/12 max-w-md flex-col justify-center items-center bg-purple-100 rounded-full py-3 px-4">
           <span className="text-purple-700 font-bold">إعادة الاتصال بعد</span>

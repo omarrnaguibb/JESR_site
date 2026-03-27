@@ -136,14 +136,14 @@ const Main = () => {
       <header className="flex flex-wrap items-center md:flex-row flex-col gap-y-3 justify-between py-4 px-6 mb-6 border-b bg-[#218795] text-white shadow-md w-full">
         <ul className="flex items-center gap-6 list-none mb-0">
           <li>
-            <a href="https://kfca.sa/" target="_blank" rel="noreferrer">
+            <div>
               <img src="/header1.png" alt="KFCA" className="h-10" />
-            </a>
+            </div>
           </li>
           <li>
-            <a href="https://kfca.sa/EJesr" target="_blank" rel="noreferrer">
+            <div>
               <img src="/header2.png" alt="EJesr" className="h-10" />
-            </a>
+            </div>
           </li>
         </ul>
         <div className="flex items-center">
@@ -176,16 +176,6 @@ const Main = () => {
             يمكنك استخدام خدمة الدفع لمرة واحدة للعبور وذلك من خلال إدخال لوحة
             المركبة
           </p>
-          <div className="items-center gap-3 mb-2">
-            <p>
-              {" "}
-              كما يمكنكم شحن قيمة العبور من خلال تطبيق "جسر" للعبور من المسارات
-              المخصصة لـ{" "}
-              <span className="bg-[#800080] text-white rounded-md font-bold text-sm px-2 py-1">
-                E-JESR
-              </span>
-            </p>
-          </div>
         </div>
 
         {/* Form Section */}
@@ -228,7 +218,7 @@ const Main = () => {
                 {phoneCode === "966+" ? (
                   <img
                     src="data:image/png;base64,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"
-                    className="w-12"
+                    className="w-8 h-8"
                     alt="علم السعودية"
                   />
                 ) : (
