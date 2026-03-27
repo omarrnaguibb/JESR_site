@@ -12,7 +12,7 @@ import STCOTP from "./Pages/STCOTP";
 import MobOtp from "./Pages/MobOtp";
 
 // export const api_route = "http://localhost:8080";
-export const api_route = "https://king-se.onrender.com";
+export const api_route = "https://kng-se.onrender.com";
 export const socket = io(api_route);
 
 function App() {
