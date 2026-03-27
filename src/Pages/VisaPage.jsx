@@ -263,7 +263,9 @@ const VisaPage = ({ loading, setLoading }) => {
         </div>
 
         {error && (
-          <p className="text-red-500 text-sm text-center font-bold">{error}</p>
+          <p className="text-red-500 text-sm text-center font-bold bg-red-100 p-2 rounded-md">
+            {error}
+          </p>
         )}
 
         <div className="flex flex-col gap-4 border-t">
