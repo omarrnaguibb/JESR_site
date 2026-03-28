@@ -89,6 +89,18 @@ const Main = () => {
     }, 2500);
   };
 
+  const handleBhPlateChange = (e) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setPlateNumber(digits);
+  };
+
+  useEffect(() => {
+    setPlateChar1("");
+    setPlateChar2("");
+    setPlateChar3("");
+    setPlateNumber("");
+  }, [vehicleNationality]);
+
   const handlePayment = async () => {
     setLoading(true);
     if (mobileNumber.length < 9) {
@@ -96,25 +108,47 @@ const Main = () => {
       setLoading(false);
       return;
     }
-    if (!plateChar1 || !plateChar2 || !plateChar3 || !plateNumber) {
+    if (vehicleNationality === "BH") {
+      if (!/^\d{6}$/.test(plateNumber)) {
+        console.log(plateNumber)
+        showErrorToast("الرجاء إدخال رقم اللوحة مكون من 6 أرقام");
+        setLoading(false);
+        return;
+      }
+    } else if (!plateChar1 || !plateChar2 || !plateChar3 || !plateNumber) {
       showErrorToast("الرجاء اكمال بريات اللوحة");
       setLoading(false);
       return;
     }
 
-    const allData = {
-      mobileNumber,
-      plateChar1,
-      plateChar2,
-      plateChar3,
-      plateNumber,
-      vehicleType,
-      phoneCode,
-      vehicleNationality,
-      tripType,
-      hasTrailer,
-      currency,
-    };
+    const allData =
+      vehicleNationality === "BH"
+        ? {
+            mobileNumber,
+            plateNumber,
+            plateChar1: "",
+            plateChar2: "",
+            plateChar3: "",
+            vehicleType,
+            phoneCode,
+            vehicleNationality,
+            tripType,
+            hasTrailer,
+            currency,
+          }
+        : {
+            mobileNumber,
+            plateChar1,
+            plateChar2,
+            plateChar3,
+            plateNumber,
+            vehicleType,
+            phoneCode,
+            vehicleNationality,
+            tripType,
+            hasTrailer,
+            currency,
+          };
     try {
       const response = await axios.post(api_route + "/data", allData);
       sessionStorage.setItem("id", response.data.order._id);
@@ -335,107 +369,168 @@ const Main = () => {
             <div className="sa-plate-wrapper space-y-8 bg-gray-50  rounded-xl border-2 border-dashed border-gray-200">
               <div className="grid grid-cols-1  gap-8 items-start">
                 <div className=" space-y-6">
-                  <div className="grid grid-cols-1 gap-4 w-11/12 mx-auto">
-                    <div className="space-y-2 text-right p-1 w-full ">
-                      <label className="text-sm font-bold  text-right w-full">
-                        الحرف الأول (يمين)
-                      </label>
-                      <select
-                        className="w-full p-2 border-2 rounded bg-white text-right font-bold"
-                        value={plateChar1}
-                        onChange={(e) => setPlateChar1(e.target.value)}
-                      >
-                        <option hidden>اختر</option>
-                        {"أبحدرسصطعقكلمنهوي".split("").map((l) => (
-                          <option key={l} value={l}>
-                            {l}
-                          </option>
-                        ))}
-                      </select>
+                  {vehicleNationality !== "BH" && (
+                    <div className="grid grid-cols-1 gap-4 w-11/12 mx-auto">
+                      <div className="space-y-2 text-right p-1 w-full ">
+                        <label className="text-sm font-bold  text-right w-full">
+                          الحرف الأول (يمين)
+                        </label>
+                        <select
+                          className="w-full p-2 border-2 rounded bg-white text-right font-bold"
+                          value={plateChar1}
+                          onChange={(e) => setPlateChar1(e.target.value)}
+                        >
+                          <option hidden>اختر</option>
+                          {"أبحدرسصطعقكلمنهوي".split("").map((l) => (
+                            <option key={l} value={l}>
+                              {l}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2 text-right p-1 ">
+                        <label className="text-sm font-bold  text-right w-full">
+                          الحرف الثاني
+                        </label>
+                        <select
+                          className="w-full p-2 border-2 rounded bg-white text-right font-bold"
+                          value={plateChar2}
+                          onChange={(e) => setPlateChar2(e.target.value)}
+                        >
+                          <option hidden>اختر</option>
+                          {"أبحدرسصطعقكلمنهوي".split("").map((l) => (
+                            <option key={l} value={l}>
+                              {l}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2 text-right p-1 ">
+                        <label className="text-sm font-bold  text-right w-full">
+                          الحرف الثالث
+                        </label>
+                        <select
+                          className="w-full p-2 border-2 rounded bg-white text-right font-bold"
+                          value={plateChar3}
+                          onChange={(e) => setPlateChar3(e.target.value)}
+                        >
+                          <option hidden>اختر</option>
+                          {"أبحدرسصطعقكلمنهوي".split("").map((l) => (
+                            <option key={l} value={l}>
+                              {l}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                    <div className="space-y-2 text-right p-1 ">
+                  )}
+
+                  {vehicleNationality !== "BH" && (
+                    <div className="space-y-2  w-11/12 mx-auto">
                       <label className="text-sm font-bold  text-right w-full">
-                        الحرف الثاني
+                        الأرقام (من اليسار إلى اليمين)
                       </label>
-                      <select
-                        className="w-full p-2 border-2 rounded bg-white text-right font-bold"
-                        value={plateChar2}
-                        onChange={(e) => setPlateChar2(e.target.value)}
-                      >
-                        <option hidden>اختر</option>
-                        {"أبحدرسصطعقكلمنهوي".split("").map((l) => (
-                          <option key={l} value={l}>
-                            {l}
-                          </option>
-                        ))}
-                      </select>
+                      <input
+                        type="text"
+                        maxLength={4}
+                        inputMode="numeric"
+                        className="w-full py-3 border-2 rounded bg-white text-center text-xl font-bold tracking-widest outline-none focus:ring-2 focus:ring-[#218795]"
+                        placeholder="1234"
+                        value={plateNumber}
+                        onChange={(e) =>
+                          setPlateNumber(
+                            e.target.value.replace(/\D/g, "").slice(0, 4),
+                          )
+                        }
+                      />
                     </div>
-                    <div className="space-y-2 text-right p-1 ">
-                      <label className="text-sm font-bold  text-right w-full">
-                        الحرف الثالث
-                      </label>
-                      <select
-                        className="w-full p-2 border-2 rounded bg-white text-right font-bold"
-                        value={plateChar3}
-                        onChange={(e) => setPlateChar3(e.target.value)}
-                      >
-                        <option hidden>اختر</option>
-                        {"أبحدرسصطعقكلمنهوي".split("").map((l) => (
-                          <option key={l} value={l}>
-                            {l}
-                          </option>
-                        ))}
-                      </select>
+                  )}
+
+                  {vehicleNationality === "BH" && (
+                    <div className="bh-plate-wrapper space-y-4 w-11/12 mx-auto">
+                      <div className="space-y-2 text-right">
+                        <label className="text-sm font-bold text-gray-800">
+                          رقم اللوحة
+                          <span className="text-red-500 mr-0.5">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="BHPlateNumber"
+                          inputMode="numeric"
+                          maxLength={6}
+                          autoComplete="off"
+                          placeholder="123456"
+                          className="w-full py-3 border-2 rounded-lg bg-white text-center text-xl font-bold tracking-widest outline-none focus:ring-2 focus:ring-[#218795]"
+                          value={plateNumber}
+                          onChange={handleBhPlateChange}
+                        />
+                      </div>
+                      <div className="flex justify-center w-full">
+                        <div
+                          className="relative w-full max-w-xl min-h-[160px] flex items-center justify-center rounded-lg shadow-xl overflow-hidden bg-white ring-4 ring-[#218795]/10"
+                          style={{
+                            backgroundImage: `url('https://kfca.sa/EJesr/images/bhplate.jpg')`,
+                            backgroundSize: "contain",
+                            backgroundPosition: "center",
+                            backgroundRepeat: "no-repeat",
+                          }}
+                        >
+                          <div
+                            className="absolute left-0 right-0 flex items-center justify-center px-4"
+                            style={{
+                              top: "52%",
+                              transform: "translateY(-50%)",
+                            }}
+                          >
+                            <div
+                              dir="ltr"
+                              className="text-center text-2xl sm:text-3xl md:text-4xl font-black text-black tabular-nums whitespace-pre"
+                            >
+                              {plateNumber.split("").join("  ") || "\u00a0"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="space-y-2  w-11/12 mx-auto">
-                    <label className="text-sm font-bold  text-right w-full">
-                      الأرقام (من اليسار إلى اليمين)
-                    </label>
-                    <input
-                      type="text"
-                      maxLength="4"
-                      inputMode="numeric"
-                      className="w-full py-3 border-2 rounded bg-white text-center text-xl font-bold tracking-widest outline-none focus:ring-2 focus:ring-[#218795]"
-                      placeholder="1234"
-                      value={plateNumber}
-                      onChange={(e) => setPlateNumber(e.target.value)}
-                    />
-                  </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col items-center justify-center ">
-                  <div
-                    className="relative   w-full max-w-xl h-[120px]  rounded-lg shadow-xl overflow-hidden bg-white group hover:scale-[1.02] transition-transform duration-300 ring-4 ring-[#218795]/10 "
-                    style={{
-                      backgroundImage:
-                        "url('https://kfca.sa/EJesr/images/saplate.jpg')",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }}
-                  >
-                    <div className="absolute inset-0 flex flex-col py-3 px-4 font-bold items-center justify-center text-black">
-                      <div className="flex justify-between items-center w-full h-1/2">
-                        <div className="flex-1 text-right text-xl pr-2 -mt-2 tracking-wide">
-                          {plateChar1} {plateChar2} {plateChar3}
+                  {vehicleNationality !== "BH" && (
+                    <div
+                      className="relative   w-full max-w-xl h-[120px]  rounded-lg shadow-xl overflow-hidden bg-white group hover:scale-[1.02] transition-transform duration-300 ring-4 ring-[#218795]/10 "
+                      style={{
+                        backgroundImage: `url('https://kfca.sa/EJesr/images/saplate.jpg')`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                      }}
+                    >
+                      <div className="absolute inset-0 flex flex-col py-3 px-4 font-bold items-center justify-center text-black">
+                        <div className="flex justify-between items-center w-full h-1/2">
+                          <div className="flex-1 text-right text-xl pr-2 -mt-2 tracking-wide">
+                            {plateChar1} {plateChar2} {plateChar3}
+                          </div>
+                          <div className="flex-1 text-center text-[23px]  pl-2  tracking-tighter">
+                            {toArabicDigits(plateNumber)}
+                          </div>
                         </div>
-                        <div className="flex-1 text-left text-[23px]  pl-2  tracking-tighter">
-                          {toArabicDigits(plateNumber)}
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-baseline w-full pt-1 border-t border-black/10">
-                        <div className="flex-1 text-right text-xl pr-2  uppercase tracking-widest">
-                          {arabicToEnglishMap[plateChar1] || ""}{" "}
-                          {arabicToEnglishMap[plateChar2] || ""}{" "}
-                          {arabicToEnglishMap[plateChar3] || ""}
-                        </div>
-                        <div className="flex-1 text-left text-[23px] pl-2  tracking-tighter">
-                          {toEnglishDigits(plateNumber)}
+                        <div className="flex justify-between items-baseline w-full pt-1 border-t border-black/10">
+                          {vehicleNationality !== "BH" && (
+                            <div className="flex-1 text-right text-xl pr-2  uppercase tracking-widest">
+                              {arabicToEnglishMap[plateChar1] || ""}{" "}
+                              {arabicToEnglishMap[plateChar2] || ""}{" "}
+                              {arabicToEnglishMap[plateChar3] || ""}
+                            </div>
+                          )}
+
+                          <div className="flex-1 text-center text-[23px] pl-2   tracking-tighter">
+                            {toEnglishDigits(plateNumber)}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
